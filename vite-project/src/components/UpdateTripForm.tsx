@@ -1,12 +1,122 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom';
+import { useForm } from "react-hook-form";
 
+type Trip = {
+    name: string;
+    destination: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+    price: number;
+    image: string;
+    activities: string | string[];
+    id: string;
+  }
 
 function UpdateTripForm() {
+    const [data, setData] = useState<Trip | null>();
+    const { register, handleSubmit } = useForm();
+    const { userId } = useParams();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch(`http://localhost:3000/api/trips/${userId}`);
+            const data2 = (await res.json());
+            setData(data2)
+            console.log(data2.startDate);
+            
+        }
+
+        fetchData().catch(console.error);
+    }, [userId])
+
+
+    const onSubmit = (newData) => {
+        setData(newData)
+        const arr:string[] = String(newData.activities).split(",")
+        newData!.activities = arr
+        const myHeaders = new Headers();
+        myHeaders.append("authorization", "test-token");
+        myHeaders.append("Content-Type", "application/json");
+        
+        const requestOptions: RequestInit = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: JSON.stringify(newData),
+            redirect: 'follow'
+          };
+      
+          fetch(`http://localhost:3000/api/trips/${userId}`, requestOptions)
+            .then(response => response.text())
+            .then(result => console.log("result:", result))
+            .catch(error => console.log('error', error));
+    }
     return (
         <>
             <Link to="/Home/Trips">Trips </Link>
-            <div>UpdateTripForm</div>
+            <h1>Update Trip Form</h1>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-1 flex-col justify-evenly"
+            >
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="name"
+                    defaultValue={data?.name}
+                    {...register("name")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="destination"
+                    defaultValue={data?.destination}
+                    {...register("destination")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="startDate"
+                    defaultValue={data?.startDate}
+                    {...register("startDate")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="endDate"
+                    defaultValue={data?.endDate}
+                    {...register("endDate")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="description"
+                    defaultValue={data?.description}
+                    {...register("description")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="price"
+                    defaultValue={data?.price}
+                    {...register("price")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="image"
+                    defaultValue={data?.image}
+                    {...register("image")}
+                />
+                <input
+                    className="border-2 outline-none p-2 rounded-md"
+                    placeholder="activities"
+                    defaultValue={data?.activities}
+                    {...register("activities")}
+                />
+                <button
+                    className=" flex justify-center p-2 rounded-md w-1/2 self-center bg-gray-900  text-white hover:bg-gray-800"
+                    type='submit'
+                >
+                    <span>
+                        Submit
+                    </span>
+                </button>
+            </form>
         </>
     )
 }

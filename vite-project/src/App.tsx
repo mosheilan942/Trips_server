@@ -6,6 +6,9 @@ import Trips from './components/Trips';
 import UserLogin from './components/UserLogin';
 import UserRegistration from './components/UserRegistration';
 import NewTripForm from './components/NewTripForm';
+import UpdateTripForm from './components/UpdateTripForm';
+import LoadingSpinner from "./LoadingSpinner";
+
 
 function App() {
   return (
@@ -16,7 +19,8 @@ function App() {
         <Route path="/Home/UserLogin" element={<UserLogin/>} />
         <Route path="/Home/Trips" element={<Trips/>} />
         <Route path="/Home/NewTripForm" element={<NewTripForm/>} />
-        <Route path={`/Home/Trips/${id}`} element={<NewTripForm  key={"id"}/>} />
+        <Route path={"/Home/Trips/:userId"} element={<TripDetail/>} />
+        <Route path={"/Home/Trips/Update/:userId"} element={<UpdateTripForm/>} />
       </Routes>
     </Router>
   )
