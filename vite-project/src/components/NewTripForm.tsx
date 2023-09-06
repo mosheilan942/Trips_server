@@ -18,7 +18,7 @@ type Trip = {
 function NewTripForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit } = useForm();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<boolean | string>(false);
   const [user, setUser] = useState("");
   const [newdata, setData] = useState<Trip>();
 
@@ -50,22 +50,36 @@ function NewTripForm() {
     };
 
     fetch("http://localhost:3000/api/trips", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        console.log("result:", result)
+      // .then(response => response.status === 401 ? setErrorMessage("result: error:Unauthorized"): null)
+      // .then(response => response.text())
+      // .then(result => {
+      //   console.log("result:", result)
+      //   setIsLoading(false)
+      // })
+      // .catch(() => {
+      //   setErrorMessage("Unable to fetch New Trip")
+      //   setIsLoading(false)
+      // });
+      .then((response) => {
+        if(!response.ok) throw new Error(String(response.status));
+        else return response.json();
+
+      })
+      .then((data) => {
         setIsLoading(false)
       })
-      .catch(() => {
-        setErrorMessage("Unable to fetch New Trip")
+      .catch((error) => {
         setIsLoading(false)
+        setErrorMessage('error: Unauthorized ' + error);
       });
 
   }
   if (isLoading) {
     return <div>Loading....</div>
   }
-  else {
-    return (
+  else
+   { return errorMessage ? <div>{errorMessage}</div> :
+     (
       <>
         <Link to="/Home/Trips">Trips </Link>
         <h1>Add New Trip</h1>
