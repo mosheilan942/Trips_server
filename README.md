@@ -1,4 +1,3 @@
-Here is a draft README file I can provide for this React project:
 
 # Trip Planner App
 
@@ -108,4 +107,4 @@ Base URL: `http://localhost:3000/api`
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Let me know if you would like me to explain or expand on any part of this README!
+
